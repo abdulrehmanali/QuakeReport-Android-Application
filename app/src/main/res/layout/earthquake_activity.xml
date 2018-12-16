@@ -35,14 +35,14 @@
         android:orientation="vertical"
         app:layout_anchor="@+id/noInternetLayout">
 
-        <ListView
+        <android.support.v7.widget.RecyclerView
             android:id="@+id/list"
             android:layout_width="fill_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:visibility="gone">
 
-        </ListView>
+        </android.support.v7.widget.RecyclerView>
     </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>
 

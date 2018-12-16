@@ -36,6 +36,7 @@ public final class QueryUtils {
         List<Earthquake> earthquakes = extractFeatureFromJson(jsonResponse);
         return earthquakes;
     }
+
     private static URL createUrl(String stringUrl) {
         URL url = null;
         try {
