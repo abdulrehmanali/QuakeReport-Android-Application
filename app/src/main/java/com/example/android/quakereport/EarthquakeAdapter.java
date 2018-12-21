@@ -1,14 +1,10 @@
 package com.example.android.quakereport;
 
-import android.content.Context;
-import android.support.v4.content.ContextCompat;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
-import android.text.Layout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import java.text.DecimalFormat;
@@ -34,11 +30,11 @@ public class EarthquakeAdapter extends RecyclerView.Adapter<EarthquakeAdapter.My
         private TextView magnitudeView,primaryLocationView,locationOffsetView,dateView,timeView;
         public MyViewHolder(View itemView) {
             super(itemView);
-            magnitudeView = (TextView) itemView.findViewById(magnitude);
-            primaryLocationView = (TextView) itemView.findViewById(primary_location);
-            locationOffsetView = (TextView) itemView.findViewById(location_offset);
-            dateView = (TextView) itemView.findViewById(date);
-            timeView = (TextView) itemView.findViewById(time);
+            magnitudeView = itemView.findViewById(magnitude);
+            primaryLocationView =  itemView.findViewById(primary_location);
+            locationOffsetView =  itemView.findViewById(location_offset);
+            dateView =  itemView.findViewById(date);
+            timeView =  itemView.findViewById(time);
         }
     }
     protected EarthquakeAdapter(List<Earthquake> earthQuakeList){this.earthQuakeList = earthQuakeList;}
@@ -46,6 +42,14 @@ public class EarthquakeAdapter extends RecyclerView.Adapter<EarthquakeAdapter.My
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item,parent,false);
         viewGroup = parent;
+        itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent openQuakeDetail = new Intent(viewGroup.getContext(),QuakeDetailActivity.class);
+                openQuakeDetail.putExtra("quakeObject","s");
+                viewGroup.getContext().startActivity(openQuakeDetail);
+            }
+        });
         return new MyViewHolder(itemView);
     }
 

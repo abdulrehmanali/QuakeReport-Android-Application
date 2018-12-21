@@ -124,7 +124,6 @@ public class EarthquakeActivity extends AppCompatActivity {
                 for (int i=0; i<data.size(); i++) {
                     Earthquake earthQuake = new Earthquake( data.get(i).getMagnitude(),  data.get(i).getPlace(),  data.get(i).getDate(), data.get(i).getUrl());
                     earthquakes.add(earthQuake);
-                    Log.e("EarthquakeActivity",earthQuake.getPlace());
                 }
                 mAdapter.notifyDataSetChanged();
             }
