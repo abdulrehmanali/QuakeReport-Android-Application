@@ -1,8 +1,13 @@
 package com.example.android.quakereport;
 
+import android.app.Activity;
 import android.content.Context;
-import android.net.Uri;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,20 +16,22 @@ import android.view.ViewGroup;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.LocationSource;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-public class QuakeMapFragment extends Fragment implements OnMapReadyCallback {
-    private static final String ARG_RADIUS = "radius", ARG_LATITUDE = "latitude" , ARG_LONGITUDE = "latitude";
+
+public class QuakeMapFragment extends Fragment implements OnMapReadyCallback, LocationSource.OnLocationChangedListener,ActivityCompat.OnRequestPermissionsResultCallback {
+    private static final String ARG_RADIUS = "radius", ARG_LATITUDE = "latitude", ARG_LONGITUDE = "latitude";
+    private static final int MY_ACCESS_FINE_LOCATION = 10001;
+    private static final int MY_ACCESS_COARSE_LOCATION = 10002;
     private double radius, latitude, longitude;
     private GoogleMap mMap;
     private MapView mapView;
+    private Context context;
 
     public QuakeMapFragment() {
-        // Required empty public constructor
     }
 
     public static QuakeMapFragment newInstance(double radius, double latitude, double longitude) {
@@ -46,14 +53,27 @@ public class QuakeMapFragment extends Fragment implements OnMapReadyCallback {
             longitude = getArguments().getDouble(ARG_LONGITUDE);
         }
     }
-
+    @Override
+    public void onRequestPermissionsResult(int requestCode,String[] permissions,int[] grantResults){
+        Log.e("QuakeMapFragment",requestCode+" == requestCode, "+permissions+" == permissions, grantResults === "+grantResults);
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_quake_map, container, false);
         mapView = view.findViewById(R.id.quakeMapView);
         mapView.onCreate(savedInstanceState);
-        mapView.getMapAsync(this);
+        context = getContext();
+        if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mapView.getMapAsync(this);
+        }else{
+            ActivityCompat.requestPermissions(getActivity(),
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_ACCESS_FINE_LOCATION);
+            ActivityCompat.requestPermissions(getActivity(),
+                    new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION},
+                    MY_ACCESS_COARSE_LOCATION);
+        }
         return view;
     }
 
@@ -70,10 +90,16 @@ public class QuakeMapFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        Log.e("QuakeMapFragment","Map Ready");
-        LatLng sydney = new LatLng(10, 29.9959);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mMap.setMyLocationEnabled(true);
+        }
+        setPointer();
+    }
+    public void setPointer(){
+        Log.e("QuakeMapFragment","Map Ready ");
+        LatLng yourLocation = new LatLng(latitude,longitude);
+        mMap.addMarker(new MarkerOptions().position(yourLocation).title("Your Location"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(yourLocation));
     }
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -103,5 +129,10 @@ public class QuakeMapFragment extends Fragment implements OnMapReadyCallback {
     public void onLowMemory() {
         super.onLowMemory();
         mapView.onLowMemory();
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+
     }
 }

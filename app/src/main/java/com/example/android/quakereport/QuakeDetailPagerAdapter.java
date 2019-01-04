@@ -5,33 +5,34 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class QuakeDetailPagerAdapter extends FragmentPagerAdapter {
+    private final List<Fragment> mFragmentList = new ArrayList<>();
+    private final List<String> mFragmentTitleList = new ArrayList<>();
+
     public QuakeDetailPagerAdapter(FragmentManager fm) {
         super(fm);
     }
 
     @Override
-    public Fragment getItem(int i) {
-        Log.e("QuakeDetailPagerAdapter",">>>>>>>>>> "+i);
-        switch(i) {
-            case 0: return QuakeDetailFragment.newInstance("FirstFragment","dasdsa");
-            case 1: return QuakeMapFragment.newInstance(000.000,000.00,00.00);
-            default: return QuakeDetailFragment.newInstance("FirstFragment","sada");
-        }
+    public Fragment getItem(int position) {
+        return mFragmentList.get(position);
     }
 
     @Override
     public int getCount() {
-        return 2;
+        return mFragmentList.size();
     }
 
+    public void addFragment(Fragment fragment, String title) {
+        mFragmentList.add(fragment);
+        mFragmentTitleList.add(title);
+    }
     @Override
     public CharSequence getPageTitle(int position) {
-        switch(position) {
-            case 0: return "Detail View";
-            case 1: return "Map View";
-            default: return "Detail View";
-        }
+        return mFragmentTitleList.get(position);
     }
 }

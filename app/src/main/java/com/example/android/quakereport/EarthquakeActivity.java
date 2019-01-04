@@ -92,7 +92,6 @@ public class EarthquakeActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.reload_data:
                 load();
-
                 return true;
 
         }
@@ -122,8 +121,7 @@ public class EarthquakeActivity extends AppCompatActivity {
         protected void onPostExecute(List<Earthquake> data) {
             if (data != null && !data.isEmpty()) {
                 for (int i=0; i<data.size(); i++) {
-                    Earthquake earthQuake = new Earthquake( data.get(i).getMagnitude(),  data.get(i).getPlace(),  data.get(i).getDate(), data.get(i).getUrl());
-                    earthquakes.add(earthQuake);
+                    earthquakes.add(data.get(i));
                 }
                 mAdapter.notifyDataSetChanged();
             }
@@ -131,6 +129,5 @@ public class EarthquakeActivity extends AppCompatActivity {
             progress.cancel();
             earthquakeRecyclerView.setVisibility(View.VISIBLE);
         }
-
     }
 }
