@@ -3,6 +3,7 @@ package com.example.android.quakereport;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -19,11 +20,13 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.LocationSource;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class QuakeMapFragment extends Fragment implements OnMapReadyCallback, LocationSource.OnLocationChangedListener,ActivityCompat.OnRequestPermissionsResultCallback {
-    private static final String ARG_RADIUS = "radius", ARG_LATITUDE = "latitude", ARG_LONGITUDE = "latitude";
+    private static final String ARG_RADIUS = "radius", ARG_LATITUDE = "latitude", ARG_LONGITUDE = "longitude";
     private static final int MY_ACCESS_FINE_LOCATION = 10001;
     private static final int MY_ACCESS_COARSE_LOCATION = 10002;
     private double radius, latitude, longitude;
@@ -48,9 +51,9 @@ public class QuakeMapFragment extends Fragment implements OnMapReadyCallback, Lo
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            radius = getArguments().getDouble(ARG_RADIUS);
-            latitude = getArguments().getDouble(ARG_LATITUDE);
-            longitude = getArguments().getDouble(ARG_LONGITUDE);
+            radius = Double.parseDouble(getArguments().getString(ARG_RADIUS));
+            latitude = Double.parseDouble(getArguments().getString(ARG_LATITUDE));
+            longitude = Double.parseDouble(getArguments().getString(ARG_LONGITUDE));
         }
     }
     @Override
@@ -64,6 +67,7 @@ public class QuakeMapFragment extends Fragment implements OnMapReadyCallback, Lo
         mapView = view.findViewById(R.id.quakeMapView);
         mapView.onCreate(savedInstanceState);
         context = getContext();
+        Log.e("Map Fragment",">>>"+radius+" "+latitude+" "+longitude);
         if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mapView.getMapAsync(this);
         }else{
@@ -96,6 +100,11 @@ public class QuakeMapFragment extends Fragment implements OnMapReadyCallback, Lo
         setPointer();
     }
     public void setPointer(){
+          mMap.addCircle(new CircleOptions()
+                .center(new LatLng(latitude,longitude))
+                .radius(radius)
+                .strokeColor(Color.BLUE)
+                .fillColor(Color.BLUE));
         Log.e("QuakeMapFragment","Map Ready ");
         LatLng yourLocation = new LatLng(latitude,longitude);
         mMap.addMarker(new MarkerOptions().position(yourLocation).title("Your Location"));
